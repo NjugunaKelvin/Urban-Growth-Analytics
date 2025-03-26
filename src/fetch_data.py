@@ -53,7 +53,7 @@ if __name__ == "__main__":
         os.makedirs(DATA_DIR)  # Create the directory
 
     df.to_csv(os.path.join(DATA_DIR, "population_data.csv"), index=False)
-    print("✅ Data fetched and saved successfully!")
+    print("Data fetched and saved successfully!")
 
 
 # Ensure the data directory exists
