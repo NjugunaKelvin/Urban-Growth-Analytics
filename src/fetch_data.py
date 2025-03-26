@@ -32,30 +32,26 @@ def process_data():
         urb_data = fetch_data(URBANIZATION_API_URL, code)
         
         if pop_data and urb_data:
-            for i in range(len(pop_data)):
-                year = pop_data[i]["date"]
-                population = pop_data[i]["value"]
-                urban_rate = urb_data[i]["value"] if i < len(urb_data) else None
+            for pop, urb in zip(pop_data, urb_data):
+                year = pop.get("date")
+                population = pop.get("value")
+                urban_rate = urb.get("value")  # Safely get urbanization rate
                 
-                records.append([country, year, population, urban_rate])
+                if year and population is not None and urban_rate is not None:
+                    records.append([country, int(year), int(population), float(urban_rate)])
 
     # Convert to DataFrame
     df = pd.DataFrame(records, columns=["Country", "Year", "Population", "Urbanization Rate"])
-    df.dropna(inplace=True)
-    df["Year"] = df["Year"].astype(int)
     
     return df
 
 if __name__ == "__main__":
     df = process_data()
-    DATA_DIR = "../data"
-    if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)  # Create the directory
+    
+    # Ensure the data directory exists
+    DATA_DIR = os.path.join("..", "data")
+    os.makedirs(DATA_DIR, exist_ok=True)
 
+    # Save data to CSV
     df.to_csv(os.path.join(DATA_DIR, "population_data.csv"), index=False)
     print("Data fetched and saved successfully!")
-
-
-# Ensure the data directory exists
-
-
